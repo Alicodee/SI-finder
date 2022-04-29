@@ -26,7 +26,8 @@ Files Information
 5. results/BERT_redis_samples.csv 
    -->>> this file contains predictions given by our fine-tuned BERT model on 200 commit messages of Redis GitHub Repository.
    
-6. Model/
+6. Model/ 
+   
    -->>> This folder contain BERT model and saved weights of our fine-tuned BERT model.
    The saved weights in Weights Folder:
        --->> These fine-tuned model weights can be used to check the classification performance of our framework on test dataset.
