@@ -1,6 +1,6 @@
 # SI-finder
 
-This is the git repository of "SI-Finder: Automated Detection of Security Issues From Commit Messages using Deep learning"
+This is the git repository of "SI-Finder: Automated Identification  of Security Issues From Commit Messages using Deep learning"
 
 
 
