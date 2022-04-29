@@ -1,0 +1,467 @@
+,manually_label,clean_message,Bert-large predicted label
+0,positive,"Fix integer overflow in STRALGO LCS CVE ID.
+An integer overflow bug in Redis version 6.0 or newer could be exploited using.
+the STRALGO LCS command to corrupt the heap and potentially result with remote.
+code execution[.].",1
+1,positive,"Fix integer overflow in intset CVE ID.
+An integer overflow bug in Redis 6.2 could be exploited to corrupt the heap and potentially result with remote code execution.
+The vulnerability involves changing the default set max intset entries configuration value creating a large set key that consists of integer values and using the COPY command to duplicate it.
+The integer overflow bug exists in all versions of Redis starting with 2.6.
+where it could result with a corrupted RDB or DUMP payload but not exploited.
+through COPY which did not exist before 6.2 [.].",1
+2,positive,"Introduce getKeysResult for getKeysFromCommand.
+Avoid using a static buffer for short key index responses and make it.
+caller s responsibility to stack allocate a result type.
+Responses that.
+don t fit are still allocated on the heap[.].",1
+3,positive,"Assert that setDeferredAggregateLen isn t called with negative value.
+In case the redis is about to return broken reply we want to crash.
+with assert so that we are notified about the bug.
+see 7687[.].",1
+4,positive,"Create PUSH handlers in redis cli.
+Add logic to redis cli to display RESP3 PUSH messages when we detect STDOUT is a tty with an optional command line argument to override the default behavior.
+The new argument show pushes yn.
+Examples.
+redis cli 3 show pushes no.
+echo client tracking on nget k1 nset k1 v1 | redis cli 3 show pushes y.",0
+5,positive,"Fix potential race in bugReportStart.
+this race would only happen when two threads paniced at the same time and even then the only consequence is some extra log lines.
+race reported in 7391.",1
+6,positive,"Assertion and panic print crash log without generating SIGSEGV.
+This makes it possible to add tests that generate assertions and run them with valgrind making sure that there are no memory violations prior to the assertion.
+New config options.
+crash log enabled can be disabled for cleaner core dumps.
+crash memcheck enabled useful for faster termination after a crash.
+use exit on panic to be used by the test suite so that valgrind can.
+detect leaks and memory corruptions.
+Other changes.
+Crash log is printed even on system that dont HAVE BACKTRACE i.e.
+in.
+both SIGSEGV and assert panic.
+Assertion and panic won t print registers and code around EIP which.
+was useless but will do fast memory test which may still indicate.
+that the assertion was due to memory corrpution.
+I had to reshuffle code in order to re use it so i extracted come code.
+into function without actually doing any changes to the code.
+logServerInfo.
+logModulesInfo.
+doFastMemoryTest with the exception of it being conditional.
+dumpCodeAroundEIP.
+changes to the crash report on segfault.
+logRegisters is called right after the stack trace before info done.
+just in order to have more re usable code.
+stack trace skips the first two items on the stack the crash log and.
+signal handler functions.",1
+7,positive,fix memory leak in sentinel connection sharing.,1
+8,positive,"Tracking fix enableBcastTrackingForPrefix invalid sdslen call.
+Related to 7387[.].",1
+9,positive,fix memory leak.,1
+10,positive,"fix disconnectSlaves to try to free each slave.
+the recent change in that loop iteration rather than waiting for it to be empty was intended to avoid an endless loop in case some slave would refuse to be freed.
+but the lookup of the first client remained which would have caused it.
+to try the first one again and again instead of moving on[.].",1
+11,positive,Redis Benchmark avoid potentical memmory leaking.,1
+12,positive,stringmatchlen should not expect null terminated strings[.].,1
+13,positive,Redis Benchmark Fix coredump because of double free.,0
+14,positive,Fix compiler warnings on function rev unsigned long.,0
+15,positive,redis cli safer cluster fix with unreachalbe masters[.].,1
+16,positive,"optimize memory usage of deferred replies.
+When deffered reply is added the previous reply node cannot be used so all the extra space we allocated in it is wasted.
+in case someone uses deffered replies in a loop each time adding a small reply each of these reply nodes the small string reply would have consumed a 16k block.
+now when we add anther diferred reply node we trim the unused portion of the previous reply block.
+see 7123.",1
+17,positive,fix integer overflow.,1
+18,positive,Fix crashes related to failed rejected accepts[.].,1
+19,positive,fix potentical memory leak in redis cli.,1
+20,positive,Threaded IO bugfix client kill may crash redis.,0
+21,positive,"ae.c fix crash when resizing the event loop.
+See 6964.
+The root cause is that the event loop may be resized from an.
+event callback itself causing the event pointer to be invalid[.].",1
+22,positive,"Merge pull request 6875 from WOOSEUNGHOON fix.
+FIX revisit CVE ID vulnerability.",1
+23,positive,FIX revisit CVE ID vulnerability.,1
+24,positive,Fix memory leak in test ld conv.,1
+25,positive,"RM Scan disable dict rehashing.
+The callback approach we took is very efficient the module can do any filtering of keys without building any list and cloning strings it can also read data from the key s value.
+but if the user tries to re open the key or any other key this can cause dict re hashing dictFind does that and that s very bad to do from inside dictScan.
+this commit protects the dict from doing any rehashing during scan but.
+also warns the user not to attempt any writes or command calls from.
+within the callback for fear of unexpected side effects and crashes[.].",1
+26,positive,"moduleRDBLoadError add key name and use panic rather than exit.
+using panic rather than exit means you get s stack trace of the code.
+path that experianced the error and possibly other info[.].",1
+27,positive,"Fix client flags to be int64 in module.c.
+currently there s no bug since the flags these functions handle are.
+always lower than 32bit but still better fix the type to prevent future.
+bugs[.].",1
+28,positive,"fix maxmemory config warning.
+the warning condition was if usage limit saying it ll cause eviction or oom but in fact the eviction and oom depends on used minus slave buffers.
+other than fixing the condition i add info about the current usage and.
+limit which may be useful when looking at the log[.].",1
+29,positive,Memory leak when bind config is provided twice.,1
+30,positive,Fix lua related memory leak[.].,1
+31,positive,fix uninitialized info cb var in module.c.,1
+32,positive,"Check OOM at script start to get stable lua OOM state.
+Checking OOM by getMaxMemoryState inside script might get different result with freeMemoryIfNeededAndSafe at script start because lua stack and arguments also consume memory.
+This leads to memory borderline when memory grows near server.maxmemory.
+freeMemoryIfNeededAndSafe at script start detects no OOM no memory freed.
+getMaxMemoryState inside script detects OOM script aborted.
+We solve this borderline issue by saving OOM state at script start to get stable lua OOM state.
+related to issue 6565 and 5250[.].",1
+33,positive,format fix.,0
+34,positive,Fix a potential overflow with strncpy.,1
+35,positive,Free allocated sds in pfdebugCommand to avoid memory leak[.].,1
+36,positive,"Fix active expire division by zero.
+Likely fix 6723.
+This is what happens AFAIK we enter the main loop where we expire stuff until a given percentage of keys is still found to be logically expired.
+There are however other potential exit conditions.
+However the sampled variable is not always incremented inside the.
+loop because we may found no valid slot as we scan the hash table but.
+just NULLs ad dict entries.
+So when the do while loop condition is.
+triggered at the end we do expired 100 sampled dividing by zero if.
+we sampled 0 keys[.].",1
+37,positive,"fix leak in module api rdb test.
+recently added more reads into that function if a later read fails i must.
+either free what s already allocated or return the pointer so that the free.
+callback will release it[.].",1
+38,positive,"Modules fix thread safe context creation crash.
+See 6525 this likely creates a NULL deference if the client was.
+terminated by Redis between the creation of the blocked client and the.
+creation of the thread safe context[.].",1
+39,positive,"Module API for explicit SignalModifiedKey instead of implicit one.
+This commit also fixes an uninitialized module struct member that luckily never got released.",1
+40,positive,"Modules make unloading module more safe.
+As we know if a module exports module side data types unload it is not allowed.
+This rule is the same with blocked clients in module because we use background threads to implement module blocked clients and it s not safe to unload a module if there are background threads running.
+So it s necessary to check if any blocked clients running in this module when unload it.
+Moreover after that we can ensure that if no modules.
+then no module blocked clients even module unloaded
+So we can call moduleHandleBlockedClients only when.
+we have installed modules[.].",1
+41,positive,Modules hooks fix memory leak in example module[.].,1
+42,positive,"Modules hooks do not re enter in hooks.
+Calling a module hook callback may result in callback operations in turn.
+triggering other events the module is subscribed too.
+We don t want to.
+trigger those it s unsafe and quite confusing and to do it correcly we.
+would need to maintain an event list quite a more complex.
+implementation[.].",1
+43,positive,Modules hooks fix a leak and a few more issues[.].,1
+44,positive,"Cluster fix memory leak of cached master.
+This is what happened.
+1.
+Instance starts is a slave in the cluster configuration but actually server.masterhost is not set so technically the instance is acting like a master.
+2.
+loadDataFromDisk calls replicationCacheMasterUsingMyself even if the instance is a master in the case it is logically a slave and the cluster is enabled.
+So now we have a cached master even if the instance is practically configured as a master from the POV of server.masterhost value and so forth.
+3.
+clusterCron sees that the instance requires to replicate from its.
+master because logically it is a slave so it calls.
+replicationSetMaster that will in turn call.
+replicationCacheMasterUsingMyself before this commit this call would.
+overwrite the old cached master creating a memory leak[.].",1
+45,positive,"fix issues found by a static analyzer.
+cluster.c stack buffer memory alignment.
+The pointer buf is cast to a more strictly aligned pointer type.
+evict.c lazyfree lazy eviction lazyfree lazy eviction always called.
+defrag.c bug in dead code.
+server.c casting was missing parenthesis.
+rax.c indentation newline suggested an else if was intended.",1
+46,positive,"RED 31295 redis avoid race between dlopen and thread creation.
+It seeems that since I added the creation of the jemalloc thread redis.
+sometimes fails to start with the following error.
+Inconsistency detected by ld.so dl tls.c 493 dl allocate tls init Assertion listp slotinfo cnt .gen GL dl tls generation failed.
+This seems to be due to a race bug in ld.so in which TLS creation on the thread collide with dlopen.
+Move the creation of BIO and jemalloc threads to after modules are loaded.
+plus small bugfix when trying to disable the jemalloc thread at runtime.",1
+47,positive,Fix memory leak in moduleLoadFromQueue [.].,1
+48,positive,Fix memory leak in RM UnregisterCommandFilter [.].,1
+49,positive,"TerminateModuleForkChild move safety checks there.
+We don t want that the API could be used directly in an unsafe way.
+without checking if there is an active child.
+Now the safety checks are.
+moved directly in the function performing the operations[.].",1
+50,positive,"Streams fix xreadGetKeys buffer overflow.
+The loop allocated a buffer for the right number of keys positions then overflowed it going past the limit.
+Related to 4857 and cause of the memory violation seen in 5028[.].",1
+51,positive,"Fix infinite loop in dbRandomKey.
+Thanks to kevinmcgehee for signaling the issue and reasoning about the consequences and potential fixes.
+Issue 5015[.].",1
+52,positive,Fix config set numerical field integer overflow[.].,1
+53,positive,"Security fix redis cli buffer overflow.
+Thanks to Fakhri Zulkifli for reporting it.
+The fix switched to dynamic allocation copying the final prompt in the.
+static buffer only at the end[.].",1
+54,positive,"Fix rdbSaveKeyValuePair integer overflow.
+Again thanks to oranagra.
+The object idle time does not fit into an int.
+sometimes use the native type that the serialization function will get.
+as argument which is uint64 t[.].",1
+55,positive,Cluster Manager fixed infinite loop in rebalance Issue 4941 [.].,1
+56,positive,Fix redis cli memory leak when sending set preference command[.].,1
+57,positive,Cluster Manager fixed some memory error.,1
+58,positive,Fixed memory write error in clusterManagerGetConfigSignature.,1
+59,positive,"Cluster Manager fixed various memory leaks.
+Cluster Manager fixed flags assignment in.
+clusterManagerNodeLoadInfo.",1
+60,positive,Modules Timer API fix infinite loop and export API[.].,1
+61,positive,fix memory leak for streamPropagateXCLAIM.,1
+62,positive,Fix zlexrangespec mem leak in genericZrangebylexCommand.,1
+63,positive,Cluster Manager fixed some memory error.,1
+64,positive,Fixed memory write error in clusterManagerGetConfigSignature.,1
+65,positive,"Cluster Manager fixed various memory leaks.
+Cluster Manager fixed flags assignment in.
+clusterManagerNodeLoadInfo.",1
+66,positive,"Fix zrealloc to behave similarly to je realloc when size is 0.
+According to C11 the behavior of realloc with size 0 is now deprecated.
+it can either behave as free ptr and return NULL or return a valid pointer.
+but in zmalloc it can lead to zmalloc oom handler and panic.
+and that can affect modules that use it.
+It looks like both glibc allocator and jemalloc behave like so.
+realloc malloc 32 0 returns NULL.
+realloc NULL 0 returns a valid pointer.
+This commit changes zmalloc to behave the same.",1
+67,positive,lazyfree fix memory leak for lazyfree lazy server del.,1
+68,positive,fix int overflow problem in freeMemoryIfNeeded.,1
+69,positive,Fix memory usage list bug.,1
+70,positive,"fix processing of large bulks above 2GB.
+protocol parsing processMultibulkBuffer was limitted to 32big positions in the buffer.
+readQueryFromClient potential overflow.
+rioWriteBulkCount used int although rioWriteBulkString gave it size t.
+several places in sds.c that used int for string length or index
+bugfix in RM SaveAuxField return was 1 or 1 and not length.
+RM SaveStringBuffer was limitted to 32bit length.",1
+71,positive,Prevent off by one read in stringmatchlen fixes 4527.,1
+72,positive,Streams fix memory leak in streamTrimByLength [.].,1
+73,positive,"Streams fixed memory leaks when blocking again for same stream.
+blockForKeys was not freeing the allocation holding the ID when the.
+key was already found busy.
+Fortunately the unit test checked explicitly.
+for blocking multiple times for the same key copying a regression in.
+the blocking lists tests so the bug was detected by the Redis test leak.
+checker[.].",1
+74,positive,Modules fix memory leak in RM IsModuleNameBusy [.].,1
+75,positive,Fix undefined behavior constant defined[.].,1
+76,positive,"PSYNC2 safe free backlog when reach the time limit.
+When we free the backlog we should use a new.
+replication ID and clear the ID2.
+Since without.
+backlog we can not increment master repl offset.
+even do write commands that may lead to inconsistency.
+when we try to connect a slave before master.
+if this master is our slave before our replid.
+equals the master s replid2.
+As the master have our.
+history so we can match the master s replid2 and.
+second replid offset that make partial sync work.
+but the data is inconsistent[.].",1
+77,positive,"Fix buffer overflows occurring reading redis.conf.
+There was not enough sanity checking in the code loading the slots of Redis Cluster from the nodes.conf file this resulted into the attacker s ability to write data at random addresses in the process memory by manipulating the index of the array.
+The bug seems exploitable using the following techique the config file may be altered so that one of the nodes gets as node ID which is the first field inside the structure some data that is actually executable then by writing this address in selected places this node ID part can be executed after a jump.
+So it is mostly just a matter of effort in order to exploit the bug.
+In practice however the issue is not very critical because the bug requires an unprivileged user to be able to modify the Redis cluster nodes configuration and at the same time this should result in some gain.
+However Redis normally is unprivileged as well.
+Yet much better to have this fixed indeed.
+Fix 4278[.].",1
+78,positive,Fix file descriptor leak and error handling.,1
+79,positive,"Merge pull request 4324 from soloestoy lazyfree fix memory leak.
+Lazyfree avoid memory leak when free slowlog entry.",1
+80,positive,Lazyfree avoid memory leak when free slowlog entry.,1
+81,positive,"Merge pull request 3784 from badboy dont divide by zero.
+Don t divide by zero.",0
+82,positive,"Don t divide by zero.
+Previously Redis crashed on MEMORY DOCTOR when it has no slaves attached.
+Fixes 3783.",1
+83,positive,"Merge pull request 3603 from oranagra adjustOpenFilesLimit overflow.
+fix unsigned int overflow in adjustOpenFilesLimit.",1
+84,positive,"Writable slaves expires fix leak in key tracking.
+We need to use a dictionary type that frees the key since we copy the.
+keys in the dictionary we use to track expires created in the slave.
+side[.].",1
+85,positive,"Merge pull request 3648 from dvirsky fix reply crash.
+fix memory corruption on RM FreeCallReply.",1
+86,positive,fix memory corruption on RM FreeCallReply.,1
+87,positive,PSYNC2 Minor memory leak reading NOMASTERLINK master reply fixed[.].,1
+88,positive,fix unsigned int overflow in adjustOpenFilesLimit.,1
+89,positive,"Merge pull request 3492 from fix memory.
+fix memory error on module unload.",1
+90,positive,fix memory error on module unload.,1
+91,positive,"Avoid undefined behavior in BITFIELD implementation.
+Probably there is no compiler that will actaully break the code or raise a signal for unsigned signed overflowing conversion still it was apparently possible to write it in a more correct way.
+All tests passing[.].",1
+92,positive,"Merge pull request 3118 from sunheehnus bitfield fix minor bug.
+bitops bitfield fix length overflow condition and sign.",1
+93,positive,bitops bitfield fix length overflow condition and sign.,1
+94,positive,"Sentinel improve handling of known Sentinel instances.
+1.
+Bug 3035 is fixed NULL pointer access.
+This was happening with the.
+folling set of conditions.
+For some reason one of the Sentinels let s call it Sentinel A changed ID reconfigured from scratch but is as the same address at which it used to be.
+Sentinel A performs a failover and or has a newer configuration compared to another Sentinel that we call Sentinel B.
+Sentinel B receives an HELLO message from Sentinel A where the address and or ID is mismatched but it is reporting a newer configuration for the master they are both monitoring.
+2.
+Sentinels now must have an ID otherwise they are not loaded nor persisted in the configuration.
+This allows to have conflicting Sentinels with the same address since now the master sentinels dictionary is indexed by Sentinel ID.
+3.
+The code now detects if a Sentinel is annoucing itself with an IP port pair already busy of another Sentinel.
+The old Sentinel that had the same port pair is set as having port 0 that means the address is invalid.
+We may discover the right address later via HELLO messages[.].",1
+95,positive,Fix memory leak in masterauth config option loading[.].,1
+96,positive,"Merge pull request 2726 from patch 2.
+Fix race condition in unit introspection.",1
+97,positive,"Cluster fix setting nodes slaveof pointer to NULL on node release.
+With this commit we preserve the list of nodes that have .slaveof set to the node even when the node is turned into a slave and make sure to fix the .slaveof pointers to NULL when a node is freed from memory regardless of the fact it s a slave or a master.
+Basically we try to remember the logical master in the current configuration even if the logical master advertised it as a slave already.
+However we still remember the associations so that when a node is freed we can fix them.
+This should fix issue 3002[.].",1
+98,positive,"Fix a possible race condition of sdown detection if the.
+connection to master slave sentinel decames disconnected just after the last PONG and before the next PING[.].",1
+99,positive,"Merge pull request 2943 from sunheehnus.
+lua struct.c getnum throw error if overflow happen.",1
+100,negative,RDB update rdbLoadRio comment about EOF condition[.].,0
+101,negative,Remove useless comment from enumConfigSet [.].,0
+102,negative,config proto max bulk len must be 1mb or greater.,0
+103,negative,RM ReplyWithCString was missing registration.,0
+104,negative,Fix compile warnings when BUILD TLS no[.].,0
+105,negative,add SAVE subcommand to ACL HELP and top comment.,0
+106,negative,Function renamed hasForkChild hasActiveChildProcess [.].,0
+107,negative,"Adjusts io threads num max to 128.
+Instead of 512 use the defined max from networking.c.",0
+108,negative,"Adds BIN PATH to create cluster.
+Allows for setting the binaries path if used outside the upstream repo.
+Also documents call in usage clause TODO port to.
+redis cli cluster call or just deprecate it [.].",0
+109,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+110,negative,XINFO STREAM FULL should have a default COUNT of 10.,0
+111,negative,DEBUG OBJECT should pass keyname to module when loading.,0
+112,negative,Client side caching implement trackingInvalidateKeysOnFlush.,0
+113,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+114,negative,fix ThreadSafeContext lock unlock function names.,0
+115,negative,Modules RM GetClientInfoById draft[.].,0
+116,negative,Added crcspeed library.,0
+117,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+118,negative,Added the missed macro definition in slowlog.h.,0
+119,negative,optimize the output of cluster slots.,0
+120,negative,ACL SHA256 based password hashing function implemented[.].,1
+121,negative,"ACL store hashed passwords in memory.
+Note that this breaks API compatibility with Redis 6.
+CONFIG GET requirepass.
+Will no longer return a cleartext password as well but the SHA256 hash.
+of the password set[.].",0
+122,negative,Don t queue commands in an already aborted MULTI state.,1
+123,negative,Cluster fix misleading accept errors[.].,1
+124,negative,"Squashed deps hiredis changes from d5b4c69b7[.]00272d669.
+Rename sds calls so they don t conflict in Redis.
+git subtree dir deps hiredis.
+git subtree split.",0
+125,negative,use correct list for moduleUnregisterUsedAPI.,0
+126,negative,"Explain why we allow transactions in BUSY state.
+Related to 7022[.].",0
+127,negative,"emptyDbGeneric call signalFlushDb before deleting the keys.
+This was broken since a refactoring performed recently by myself[.].",0
+128,negative,RESP3 handle set Lua Redis conversion[.].,0
+129,negative,config.c remove trailing spaces trim comments to 80 cols[.].,0
+130,negative,LOLWUT ability to specify VERSION ver option[.].,0
+131,negative,Merge remote tracking branch upstream unstable into tls.,0
+132,negative,RESP3 Use verbatim in DEBUG HTSTATS HTSTATS KEY[.].,0
+133,negative,"Modules hooks for nested calls create new fake clients.
+We can t use the same client at the same time when re entering the hook[.].",0
+134,negative,Log RDB deletion in persistence less instances[.].,0
+135,negative,Modules export GetClientInfoById [.].,0
+136,negative,block propagate BRPOPLPUSH as RPOPLPUSH when unblock.,0
+137,negative,RDB try to make error handling code more readable[.].,0
+138,negative,Only supress implitic fallthrough on GCC 7.,0
+139,negative,Rax.c populate data field after random walk[.].,1
+140,negative,"Signal key as modified when expired on access.
+This fixes WATCH and client side caching with keys expiring because of.
+a synchronous access and not because of background expiring[.].",1
+141,negative,Tracking signal key as modified when evicting[.].,0
+142,negative,fix impl of aof child whitelist SIGUSR1 feature[.].,0
+143,negative,Make EMBSTR case of 6261 more obvious[.].,0
+144,negative,freeClientAsync don t lock mutex if there s just one thread.,1
+145,negative,Client side caching config option for table fill rate[.].,0
+146,negative,LCS 7x speedup by accessing the array with better locality[.].,0
+147,negative,Module API for LatencyAddSample.,0
+148,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+149,negative,"Modules handle propagation when ctx is freed.
+Flag modules commands ctx[.].",0
+150,negative,Expire cycle fix parameters computation[.].,1
+151,negative,Modules Do not auto unblock clients if not blocked on keys.,0
+152,negative,Added a flag for strings that are stored as NULL.,0
+153,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+154,negative,redis cli some refactoring about not logging AUTH co[.].,0
+155,negative,Modules RM Replicate test module initial implementation[.].,0
+156,negative,Updating resident memory request impl on FreeBSD[.].,1
+157,negative,Precise timeouts fix bugs in initial implementation[.].,1
+158,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+159,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+160,negative,Typo fix kill still.,0
+161,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+162,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+163,negative,RESP3 implement lua.setresp [.].,0
+164,negative,Client side caching split invalidation into key slot[.].,1
+165,negative,"Rename non API RM prefixed functions to hide them from API docs.
+The prefix is changed from RM to module on the following.
+internal functions to prevent them from appearing in the API docs.
+RM LogRaw moduleLogRaw.
+RM FreeCallReplyRec moduleFreeCallReplyRec.
+RM ZsetAddFlagsToCoreFlags moduleZsetAddFlagsToCoreFlags.
+RM ZsetAddFlagsFromCoreFlags moduleZsetAddFlagsFromCoreFlags.",0
+166,negative,"Diskless load emptyDb related fixes.
+1.
+Call emptyDb even in case of diskless load We want modules.
+to get the same FLUSHDB event as disk based replication
+2.
+Do not fire any module events when flushing the backups array
+3.
+Delete redundant call to signalFlushedDb Called from emptyDb [.].",1
+167,negative,Modules RM Replicate test with threads[.].,0
+168,negative,"Use cluster connections too to limit maxclients.
+See 7401[.].",0
+169,negative,32bit CI needs to build modules correctly.,0
+170,negative,"RESP3 Verbatim conversion test in the LOLWUT command.
+redis cli is currently not able to handle it after going in RESP3 mode.
+because of hiredis limitations[.].",0
+171,negative,Tracking flag CLIENT TRACKING BROKEN REDIR when redir broken.,0
+172,negative,module docs missing LOADING flag.,0
+173,negative,Introduce ReplyWithVerbatimString ReplyWithEmptyArray ReplyWithNullArray and ReplyWithEmptyString to redis module API.,0
+174,negative,address comment.,0
+175,negative,"add a read only variant for HELLO As discussed in URL it is good to have a HELLO command variant which does not switch the current proto version of a redis server.
+While HELLO will work it introduced a certain difficulty on parsing options of the command.
+We will need to offset the index of authentication and setname option by 1.
+So 0 is marked a special version meaning non switching.
+And we do not.
+need to change the code much[.].",0
+176,negative,"Modules Allow notifying custom keyspace events.
+Also add an API for getting server.notify keyspace events.
+Other unrelated changes.
+Add RM GetKeynameFromModuleKey.",0
+177,negative,Modules updated function doc after 7003[.].,0
+178,negative,Update SDS to latest version[.].,0
+179,negative,Refactor multi key command get keys proc.,0
+180,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+181,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+182,negative,PSYNC2 reset backlog idx and master repl offset correctly.,0
+183,negative,correct help info for user and pass.,0
+184,negative,Modules hooks a first version of events and some API[.].,0
+185,negative,Expire cycle make expire effort configurable[.].,0
+186,negative,Merge branch unstable of github.com antirez redis into unstable.,0
+187,negative,Rework comment in dictEncObjKeyCompare [.].,0
+188,negative,Hide HELLO and AUTH from slowlog and monitor.,0
+189,negative,"Jump to right label on AOF parsing error.
+Related to 6054[.].",0
+190,negative,Add missing header.,0
+191,negative,typo fix in acl.c.,0
+192,negative,Modules hooks handle module unloading API export[.].,0
+193,negative,Fix ACL HELP table missing comma[.].,0
+194,negative,Client side caching don t hash the key if not needed[.].,0
+195,negative,"LOLWUT version 6 initial output.
+May change a bit[.].",0
+196,negative,"ACL Make Redis 6 more backward compatible with requirepass.
+Note that this as a side effect fixes Sentinel requirepass mode[.].",1
+197,negative,redis cli simplify cluster nodes coverage display[.].,0
+198,negative,ACL LOG implement LOG RESET[.].,0
+199,negative,ACL LOG data structures and initial functions[.].,0
